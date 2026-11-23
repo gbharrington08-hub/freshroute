@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FreshRoute: Cheap Meal Planner for Students</title>
+<meta name="description" content="Plan a week of cheap, healthy meals in minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: friendly, quick, budget-savvy; talks like a mate who can cook.
+IDEA: a route map through the week, each meal a stop on the line, priced like a market tag.
+PICTURE: a drawn route line with veg "stops" and price tags; the planner itself on its page.
+COLOUR and TYPE: leaf green dominant, mint support, dark orange accent for every CTA; Outfit + Nunito Sans.
+LAYOUT: sticky nav, full-width green hero band, card grids, one calm column for forms; stacks under 600px. */
+:root{color-scheme:light dark;
+--bg:light-dark(#fbfdf9,#0f1a13);--ink:light-dark(#142019,#e7f1ea);--soft:light-dark(#4b5b51,#a9bcb0);
+--leaf:light-dark(#1f7a45,#3fae6c);--leafdeep:light-dark(#145c33,#0f3a22);--mint:light-dark(#e3f4e8,#17291e);
+--card:light-dark(#ffffff,#152219);--line:light-dark(#d6e6da,#2a3d30);--cta:#c2410c;--ctah:#9a3412;--tag:light-dark(#fff4e6,#3a2313);--tagink:light-dark(#9a3412,#fdba74)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Nunito Sans",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Outfit,system-ui,sans-serif;line-height:1.05;margin:0 0 .4em;text-wrap:balance}
+h1{font-size:clamp(34px,5.2vw,52px);font-weight:800}h2{font-size:clamp(26px,3.4vw,36px);font-weight:700}h3{font-size:19px;font-weight:700;line-height:1.2}
+a{color:var(--leaf)}
+.wrap{max-width:1240px;margin:0 auto}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px max(5vw,16px);max-width:calc(1240px + 2*max(5vw,16px));margin:0 auto}
+.logo{display:flex;align-items:center;gap:8px;font:800 22px Outfit,system-ui,sans-serif;color:var(--ink);text-decoration:none;margin-right:auto}
+nav .links{display:flex;gap:4px;flex-wrap:wrap}
+nav .links a{text-decoration:none;color:var(--ink);padding:10px 12px;border-radius:10px;font-weight:600;min-height:44px;display:inline-flex;align-items:center}
+nav .links a[aria-current]{background:var(--mint);color:var(--leaf)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:12px;border:0;background:var(--cta);color:#fff;font:700 17px Outfit,system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.btn:hover{background:var(--ctah)}.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.small{min-height:44px;padding:8px 14px;font-size:15px}
+:focus-visible{outline:3px solid var(--cta);outline-offset:2px}
+.hero{background:var(--leafdeep);color:#f1faf3}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:32px;align-items:center}
+.hero p.lead{font-size:19px;max-width:34em;color:#cfe9d7}
+.hero h1{color:#fff}
+.fig{position:relative;min-height:340px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.proof{background:var(--mint)}
+.proof .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ph{border:2px dashed var(--line);border-radius:14px;padding:18px;color:var(--soft);background:var(--card)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 22px}
+.chip{min-height:44px;padding:8px 16px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:600 15px "Nunito Sans",sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.recipes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.rc{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.rc .art{height:130px;display:block;width:100%;object-fit:cover}
+.rc .body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.price{background:var(--tag);color:var(--tagink);font-weight:800;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.time{background:var(--mint);color:var(--leaf);font-weight:700;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.rc .ing{color:var(--soft);font-size:15px;margin:0}
+.rc .add{display:flex;gap:8px;margin-top:auto}
+select,input,textarea{font:16px "Nunito Sans",sans-serif;min-height:44px;padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+.rc select{flex:1}
+.progress{background:var(--mint);border-radius:999px;height:14px;overflow:hidden;margin:6px 0 4px}
+.progress i{display:block;height:100%;background:var(--leaf);border-radius:999px;transition:width .4s}
+.planner{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:24px;align-items:start}
+.pool{display:flex;flex-direction:column;gap:8px}
+.drag{padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line);cursor:grab;display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+.day{min-height:150px;border:2px dashed var(--line);border-radius:14px;padding:10px;background:var(--card);display:flex;flex-direction:column;gap:8px}
+.day.over{border-color:var(--cta);background:var(--tag)}
+.day b{font-family:Outfit,sans-serif}
+.day select{font-size:14px;padding:8px}.day .meal{background:var(--mint);border-radius:10px;padding:8px;font-size:14px;font-weight:600}
+.day button.x{border:0;background:none;color:var(--soft);cursor:pointer;font:600 13px "Nunito Sans",sans-serif;padding:4px 0;min-height:32px;text-align:left;text-decoration:underline}
+.list{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);gap:24px;align-items:start}
+.aisle{margin-bottom:18px}.aisle h3{color:var(--leaf)}
+.aisle ul{list-style:none;margin:0;padding:0}
+.aisle li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.aisle li input{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--leaf)}
+.aisle li span{flex:1}.aisle li em{font-style:normal;font-weight:700;white-space:nowrap}
+.aisle li.done span{text-decoration:line-through;color:var(--soft)}
+.total{position:sticky;top:90px}.total .big{font:800 46px Outfit,sans-serif;color:var(--leaf);line-height:1}
+.form{max-width:560px}.form label{display:block;font-weight:700;margin:14px 0 6px}
+.note{font-size:14px;color:var(--soft)}
+.empty{padding:28px;text-align:center;color:var(--soft)}
+footer{background:var(--leafdeep);color:#cfe9d7}footer a{color:#fff}
+footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
+[hidden]{display:none!important}
+@media(max-width:900px){.planner,.list{grid-template-columns:minmax(0,1fr)}.week{grid-template-columns:repeat(4,minmax(0,1fr))}.total{position:static}}
+@media(max-width:600px){.hero .wrap,.steps,.proof .grid{grid-template-columns:minmax(0,1fr)}.week{grid-template-columns:minmax(0,1fr)}.day{min-height:0}.fig{min-height:260px}nav .links a{padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><nav aria-label="Main">
+<a class="logo" href="#home"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="14" fill="#1f7a45"/><path d="M8 20c6 0 13-5 14-12-7 0-13 5-14 12z" fill="#e3f4e8"/><path d="M9 21c4-4 7-7 11-11" stroke="#1f7a45" stroke-width="1.6"/></svg>FreshRoute</a>
+<div class="links">
+<a href="#home">Home</a><a href="#recipes">Recipes</a><a href="#planner">Meal Planner</a><a href="#list">Shopping List</a><a href="#contact">Contact</a>
+</div>
+</nav></header>
+
+<main>
+<section id="v-home">
+<div class="band hero"><div class="wrap">
+<div>
+<h1>Eat well for under £20 a week</h1>
+<p class="lead">Cheap, quick meals planned for you, with the shopping list done. Built for skint students and anyone too busy to think about dinner.</p>
+<p><a class="btn" href="#planner">Plan my week</a></p>
+<p style="color:#cfe9d7;font-size:15px">No sign-up. No faff, no waste.</p>
+</div>
+<div class="fig" aria-label="Illustration of a week of meals as stops on a route">
+<svg viewBox="0 0 560 360" preserveAspectRatio="xMidYMid meet">
+<defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f9a5a"/><stop offset="1" stop-color="#1b6a3c"/></linearGradient>
+<g id="stop"><circle r="22" fill="#fff"/><circle r="22" fill="none" stroke="#c2410c" stroke-width="5"/></g></defs>
+<rect x="10" y="20" width="540" height="320" rx="28" fill="url(#g1)"/>
+<path d="M60 290 C130 290 120 200 190 200 S260 110 330 120 S400 230 470 210 S520 90 500 70" fill="none" stroke="#e3f4e8" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 20"/>
+<g transform="translate(60 290)"><use href="#stop"/><text y="6" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="15" fill="#145c33">Mon</text></g>
+<g transform="translate(190 200)"><use href="#stop"/><text y="6" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="15" fill="#145c33">Tue</text></g>
+<g transform="translate(330 120)"><use href="#stop"/><text y="6" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="15" fill="#145c33">Wed</text></g>
+<g transform="translate(470 210)"><use href="#stop"/><text y="6" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="15" fill="#145c33">Thu</text></g>
+<!-- veg -->
+<g transform="translate(120 110)"><ellipse cx="0" cy="44" rx="34" ry="6" fill="#0d4a28" opacity=".5"/><path d="M-8 -30 L8 -30 L0 40 Z" fill="#f97316"/><path d="M0 -30 c-10 -14 -4 -22 0 -26 c4 4 10 12 0 26" fill="#4ade80"/><path d="M-4 -10 h6 M-2 8 h5" stroke="#c2410c" stroke-width="2"/></g>
+<g transform="translate(260 290)"><ellipse cx="0" cy="26" rx="40" ry="6" fill="#0d4a28" opacity=".5"/><circle r="28" fill="#dc2626"/><circle cx="-9" cy="-9" r="8" fill="#fca5a5" opacity=".6"/><path d="M-8 -26 l8 6 l8 -6 l-4 8 h-8z" fill="#22c55e"/></g>
+<g transform="translate(410 300)"><ellipse cx="0" cy="22" rx="34" ry="5" fill="#0d4a28" opacity=".5"/><path d="M-30 0 a30 20 0 0 0 60 0z" fill="#fef3c7"/><path d="M-30 0 h60" stroke="#fde68a" stroke-width="4"/><path d="M-18 -4 q6 -10 12 0 q6 -10 12 0 q6 -10 12 0" fill="none" stroke="#f59e0b" stroke-width="4"/></g>
+<!-- price tags -->
+<g transform="translate(200 132) rotate(-6)"><rect width="92" height="40" rx="8" fill="#fff4e6"/><circle cx="12" cy="20" r="4" fill="#1b6a3c"/><text x="56" y="27" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="19" fill="#9a3412">£0.85</text></g>
+<g transform="translate(390 140) rotate(5)"><rect width="92" height="40" rx="8" fill="#fff4e6"/><circle cx="12" cy="20" r="4" fill="#1b6a3c"/><text x="56" y="27" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="19" fill="#9a3412">£1.40</text></g>
+<g transform="translate(470 40)"><rect width="66" height="34" rx="17" fill="#c2410c"/><text x="33" y="23" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="15" fill="#fff">Sorted</text></g>
+</svg>
+</div>
+</div></div>
+<div class="band"><div class="wrap">
+<h2>Three steps, ten minutes</h2>
+<div class="steps">
+<div class="card"><h3>1. Pick cheap recipes</h3><p>Every recipe shows its price per portion and cooking time first, so you know what you're in for.</p></div>
+<div class="card"><h3>2. Fill your week</h3><p>Drop meals onto days. The progress bar shows how close you are to a sorted week.</p></div>
+<div class="card"><h3>3. Shop once</h3><p>Your list builds itself, grouped by aisle, with an estimated total before you leave the house.</p></div>
+</div>
+</div></div>
+<div class="band proof"><div class="wrap">
+<h2>Loved by students</h2>
+<p class="note">Placeholder: FreshRoute has no real users yet, so these spaces stay empty until genuine reviews come in.</p>
+<div class="grid"><div class="ph">Real student review goes here</div><div class="ph">Real student review goes here</div><div class="ph">Real student review goes here</div></div>
+</div></div>
+</section>
+
+<section id="v-recipes" class="band" hidden><div class="wrap">
+<h1>Budget recipes under £2</h1>
+<p>Prices are estimates per portion from typical UK supermarket own-brand prices.</p>
+<div class="chips" id="filters"></div>
+<div class="recipes" id="recipeGrid"></div>
+</div></section>
+
+<section id="v-planner" class="band" hidden><div class="wrap">
+<h1>Your week</h1>
+<p id="progressText"><b>0 of 7 days planned</b></p>
+<div class="progress" aria-hidden="true"><i id="bar" style="width:0%"></i></div>
+<p class="note">Drag a meal onto a day, or use “Add to day” on phones and tablets.</p>
+<div class="planner" style="margin-top:18px">
+<div><h3>Meals</h3><div class="pool" id="pool"></div></div>
+<div class="week" id="week"></div>
+</div>
+<p style="margin-top:22px"><a class="btn" href="#list">See my shopping list</a> <button class="btn ghost small" id="clear" type="button">Clear week</button></p>
+</div></section>
+
+<section id="v-list" class="band" hidden><div class="wrap">
+<h1>Shopping list</h1>
+<div class="list">
+<div id="aisles"></div>
+<aside class="card total">
+<p style="margin:0 0 6px;font-weight:700">Estimated total</p>
+<div class="big" id="total">£0.00</div>
+<p id="budget" class="note"></p>
+<label for="serves" style="font-weight:700;display:block;margin:14px 0 6px">Portions per meal</label>
+<select id="serves"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+<p style="margin-top:14px"><button class="btn small" id="copy" type="button">Copy list</button> <span id="copied" class="note" role="status"></span></p>
+</aside>
+</div>
+</div></section>
+
+<section id="v-contact" class="band" hidden><div class="wrap">
+<div class="form">
+<h1>Contact FreshRoute</h1>
+<p>Questions or recipe ideas? Get in touch.</p>
+<form id="cform" novalidate>
+<label for="cn">Name</label><input id="cn" name="name" autocomplete="name" required>
+<label for="ce">Email</label><input id="ce" name="email" type="email" autocomplete="email" required>
+<label for="cm">Message</label><textarea id="cm" name="message" rows="5" required></textarea>
+<p class="note">We only use your details to reply. See our <a href="#privacy">privacy note</a>.</p>
+<button class="btn" type="submit">Send message</button>
+<p id="cstatus" role="status" style="font-weight:700"></p>
+</form>
+</div>
+</div></section>
+
+<section id="v-privacy" class="band" hidden><div class="wrap"><div class="form">
+<h1>Privacy note</h1>
+<p>FreshRoute saves your meal plan in your own browser's local storage so it's still there next time. It's essential to how the planner works and never leaves your device.</p>
+<p>We don't use advertising or tracking cookies. If analytics are ever added, you'll be asked first.</p>
+<p>The contact form asks only for your name, email and message. They're used only to reply to you and never shared or sold. This is a student project, so the form doesn't send anything yet.</p>
+</div></div></section>
+</main>
+
+<footer class="band"><div class="wrap">
+<p style="margin:0"><b>FreshRoute</b> · cheap, fast, sorted.</p>
+<p style="margin:0"><a href="#privacy">Privacy</a> · <a href="#contact">Contact</a></p>
+</div></footer>
+
+<script>
+{
+const R=[
+{id:'dahl',n:'Red lentil dahl',p:0.85,t:25,v:1,c:'#f59e0b',ing:[['Red lentils','Dry goods',0.30],['Onion','Fruit & veg',0.10],['Chopped tomatoes','Tins & jars',0.18],['Curry powder','Spices',0.07],['Rice','Dry goods',0.20]]},
+{id:'pasta',n:'Tomato & bean pasta',p:0.95,t:15,v:1,c:'#dc2626',ing:[['Pasta','Dry goods',0.15],['Chopped tomatoes','Tins & jars',0.18],['Kidney beans','Tins & jars',0.20],['Garlic','Fruit & veg',0.07],['Cheddar','Chilled',0.35]]},
+{id:'egg',n:'Egg fried rice',p:0.90,t:15,v:1,c:'#eab308',ing:[['Rice','Dry goods',0.20],['Eggs','Chilled',0.40],['Frozen peas','Frozen',0.12],['Soy sauce','Tins & jars',0.08],['Spring onions','Fruit & veg',0.10]]},
+{id:'chilli',n:'Chicken & veg chilli',p:1.65,t:35,v:0,c:'#b91c1c',ing:[['Chicken thighs','Meat',0.85],['Kidney beans','Tins & jars',0.20],['Chopped tomatoes','Tins & jars',0.18],['Peppers','Fruit & veg',0.25],['Rice','Dry goods',0.20]]},
+{id:'wrap',n:'Halloumi wraps',p:1.80,t:15,v:1,c:'#65a30d',ing:[['Halloumi','Chilled',0.95],['Tortilla wraps','Bakery',0.25],['Lettuce','Fruit & veg',0.20],['Tomato','Fruit & veg',0.20],['Yoghurt','Chilled',0.20]]},
+{id:'soup',n:'Leek & potato soup',p:0.70,t:30,v:1,c:'#84cc16',ing:[['Leeks','Fruit & veg',0.25],['Potatoes','Fruit & veg',0.15],['Stock cube','Tins & jars',0.05],['Bread','Bakery',0.25]]},
+{id:'tuna',n:'Tuna pasta bake',p:1.20,t:30,v:0,c:'#0ea5e9',ing:[['Pasta','Dry goods',0.15],['Tuna','Tins & jars',0.45],['Sweetcorn','Tins & jars',0.15],['Cheddar','Chilled',0.35],['Milk','Chilled',0.10]]},
+{id:'jacket',n:'Beans on jacket potato',p:0.75,t:12,v:1,c:'#a16207',ing:[['Potatoes','Fruit & veg',0.20],['Baked beans','Tins & jars',0.20],['Cheddar','Chilled',0.35]]},
+{id:'stirfry',n:'Noodle veg stir-fry',p:1.10,t:12,v:1,c:'#16a34a',ing:[['Egg noodles','Dry goods',0.25],['Stir-fry veg','Fruit & veg',0.50],['Soy sauce','Tins & jars',0.08],['Garlic','Fruit & veg',0.07],['Chilli flakes','Spices',0.05]]}
+];
+const D=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const F=[['all','All'],['cheap','Under £2'],['quick','15 mins'],['veg','Vegetarian']];
+const T={home:['FreshRoute: Cheap Meal Planner for Students','Plan a week of cheap, healthy meals in minutes.'],recipes:['Budget Recipes Under £2, FreshRoute','Quick recipes with prices and times shown upfront.'],planner:['Weekly Meal Planner, FreshRoute','Plan your week and get your shopping list built for you.'],list:['Shopping List Generator, FreshRoute','Ingredients grouped by aisle with an estimated total.'],contact:['Contact FreshRoute','Questions or recipe ideas? Get in touch.'],privacy:['Privacy, FreshRoute','How FreshRoute handles your data.']};
+const byId=Object.fromEntries(R.map(r=>[r.id,r]));
+const gbp=x=>'£'+x.toFixed(2);
+let plan={},filt='all',serves=1,ticked={};
+try{const s=JSON.parse(localStorage.getItem('fr-plan')||'{}');plan=s.plan||{};serves=s.serves||1}catch(e){}
+const save=()=>{try{localStorage.setItem('fr-plan',JSON.stringify({plan,serves}))}catch(e){}};
+const $=s=>document.querySelector(s);
+const art=r=>`<svg class="art" viewBox="0 0 300 130" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="300" height="130" fill="${r.c}" opacity=".18"/><ellipse cx="150" cy="108" rx="96" ry="12" fill="${r.c}" opacity=".25"/><path d="M62 70 a88 40 0 0 0 176 0z" fill="#fff"/><ellipse cx="150" cy="70" rx="88" ry="16" fill="${r.c}"/><circle cx="125" cy="66" r="7" fill="#fff" opacity=".55"/><circle cx="168" cy="72" r="5" fill="#fff" opacity=".45"/><path d="M110 60 q8-10 16 0 M160 62 q8-10 16 0" stroke="#145c33" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`;
+const opts=()=>'<option value="">Add to day…</option>'+D.map(d=>`<option>${d}</option>`).join('');
+
+function renderRecipes(){
+$('#filters').innerHTML=F.map(([k,l])=>`<button type="button" class="chip" data-f="${k}" aria-pressed="${filt===k}">${l}</button>`).join('');
+const list=R.filter(r=>filt==='all'||(filt==='cheap'&&r.p<2)||(filt==='quick'&&r.t<=15)||(filt==='veg'&&r.v));
+$('#recipeGrid').innerHTML=list.map(r=>`<article class="rc">${art(r)}<div class="body"><div class="meta"><span class="price">${gbp(r.p)} a portion</span><span class="time">${r.t} mins</span></div><h3>${r.n}</h3><p class="ing">${r.ing.map(i=>i[0]).join(', ')}</p><div class="add"><select data-add="${r.id}" aria-label="Add ${r.n} to a day">${opts()}</select></div></div></article>`).join('')||'<p class="empty">No recipes match that filter.</p>';
+}
+function renderPlanner(){
+const n=D.filter(d=>plan[d]).length;
+$('#progressText').innerHTML=`<b>${n} of 7 days planned</b>${n===7?' · week sorted!':''}`;
+$('#bar').style.width=(n/7*100)+'%';
+$('#pool').innerHTML=R.map(r=>`<div class="drag" draggable="true" data-id="${r.id}"><span>${r.n}</span><span class="price">${gbp(r.p)}</span></div>`).join('');
+$('#week').innerHTML=D.map(d=>{const r=byId[plan[d]];return `<div class="day" data-day="${d}"><b>${d}</b>${r?`<div class="meal">${r.n}<br><span class="note">${gbp(r.p)} · ${r.t} mins</span></div><button class="x" type="button" data-rm="${d}">Remove</button>`:`<select data-day-pick="${d}" aria-label="Choose a meal for ${d}"><option value="">Add…</option>${R.map(x=>`<option value="${x.id}">${x.n}</option>`).join('')}</select>`}</div>`}).join('');
+}
+function renderList(){
+const items={};
+D.forEach(d=>{const r=byId[plan[d]];if(!r)return;r.ing.forEach(([n,a,c])=>{const k=a+'|'+n;items[k]=items[k]||{n,a,c:0,q:0};items[k].c+=c*serves;items[k].q++})});
+const groups={};Object.values(items).forEach(i=>(groups[i.a]=groups[i.a]||[]).push(i));
+const total=Object.values(items).reduce((s,i)=>s+i.c,0);
+$('#aisles').innerHTML=Object.keys(groups).length?Object.keys(groups).sort().map(a=>`<div class="aisle"><h3>${a}</h3><ul>${groups[a].map(i=>{const k=a+'|'+i.n;return `<li class="${ticked[k]?'done':''}"><input type="checkbox" id="t-${k}" data-tick="${k}" ${ticked[k]?'checked':''}><span><label for="t-${k}">${i.n}</label>${i.q>1?` <span class="note">(${i.q} meals)</span>`:''}</span><em>${gbp(i.c)}</em></li>`}).join('')}</ul></div>`).join(''):'<div class="card empty">Your list is empty. <a href="#planner">Plan some meals</a> and it fills itself.</div>';
+$('#total').textContent=gbp(total);
+$('#budget').textContent=total?(total<=20?`That's ${gbp(20-total)} under a £20 week.`:`That's ${gbp(total-20)} over £20. Try a cheaper swap.`):'Add meals to see your total.';
+$('#serves').value=serves;
+}
+function route(){
+const v=(location.hash.slice(1)||'home');const page=T[v]?v:'home';
+document.querySelectorAll('main>section').forEach(s=>s.hidden=s.id!=='v-'+page);
+document.querySelectorAll('nav .links a').forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')==='#'+page));
+document.title=T[page][0];document.querySelector('meta[name=description]').content=T[page][1];
+if(page==='recipes')renderRecipes();if(page==='planner')renderPlanner();if(page==='list')renderList();
+window.scrollTo(0,0);
+}
+document.addEventListener('click',e=>{
+const f=e.target.closest('[data-f]');if(f){filt=f.dataset.f;renderRecipes()}
+const rm=e.target.closest('[data-rm]');if(rm){delete plan[rm.dataset.rm];save();renderPlanner()}
+});
+document.addEventListener('change',e=>{
+const t=e.target;
+if(t.dataset.add&&t.value){plan[t.value]=t.dataset.add;save();t.outerHTML=`<p class="note" style="margin:0;font-weight:700;color:var(--leaf)">Added to ${t.value}. <a href="#planner">View week</a></p>`}
+if(t.dataset.dayPick&&t.value){plan[t.dataset.dayPick]=t.value;save();renderPlanner()}
+if(t.dataset.tick){ticked[t.dataset.tick]=t.checked;t.closest('li').classList.toggle('done',t.checked)}
+if(t.id==='serves'){serves=+t.value;save();renderList()}
+});
+document.addEventListener('dragstart',e=>{const d=e.target.closest('.drag');if(d)e.dataTransfer.setData('text/plain',d.dataset.id)});
+document.addEventListener('dragover',e=>{const d=e.target.closest('.day');if(d){e.preventDefault();d.classList.add('over')}});
+document.addEventListener('dragleave',e=>{const d=e.target.closest('.day');if(d)d.classList.remove('over')});
+document.addEventListener('drop',e=>{const d=e.target.closest('.day');if(!d)return;e.preventDefault();const id=e.dataTransfer.getData('text/plain');if(byId[id]){plan[d.dataset.day]=id;save();renderPlanner()}});
+$('#clear').addEventListener('click',()=>{plan={};save();renderPlanner()});
+$('#copy').addEventListener('click',()=>{const txt=[...document.querySelectorAll('.aisle')].map(a=>a.querySelector('h3').textContent+'\n'+[...a.querySelectorAll('li')].map(l=>'- '+l.querySelector('label').textContent).join('\n')).join('\n\n');
+if(!txt){$('#copied').textContent='Nothing to copy yet.';return}
+navigator.clipboard.writeText(txt).then(()=>$('#copied').textContent='Copied!',()=>$('#copied').textContent='Copy blocked here. Select the list instead.')});
+$('#cform').addEventListener('submit',e=>{e.preventDefault();const f=e.target,s=$('#cstatus');
+if(!f.name.value.trim()||!/^\S+@\S+\.\S+$/.test(f.email.value)||!f.message.value.trim()){s.style.color='var(--cta)';s.textContent='Please fill in your name, a valid email and a message.';return}
+s.style.color='var(--leaf)';s.textContent='Thanks! This is a demo site, so your message wasn’t actually sent.';f.reset()});
+window.addEventListener('hashchange',route);
+route();
+}
+</script>
+</body>
+</html>
